@@ -1,11 +1,17 @@
 import React, { useState, useRef } from "react";
 import Header from "./Header";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { validateData } from "../utils/Validate.js";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+import { auth } from "../utils/Firebase.js";
 
 const Login = () => {
   const [isSignInFrom, setIsSignInFrom] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
+  const navigate = useNavigate();
 
   const handleToggle = () => {
     setIsSignInFrom(!isSignInFrom);
@@ -24,6 +30,49 @@ const Login = () => {
       password.current.value
     );
     setErrorMessage(message);
+    if (message) return;
+
+    if (!isSignInFrom) {
+      //sign up logic
+      createUserWithEmailAndPassword(
+        auth,
+        email.current.value,
+        password.current.value
+      )
+        .then((userCredential) => {
+          // Signed up
+          const user = userCredential.user;
+          console.log(user);
+          navigate("/browse");
+          // ...
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          setErrorMessage(errorCode + "-" + errorMessage);
+          navigate("/");
+        });
+    } else {
+      //sign in logic
+      signInWithEmailAndPassword(
+        auth,
+        email.current.value,
+        password.current.value
+      )
+        .then((userCredential) => {
+          // Signed in
+          const user = userCredential.user;
+          console.log(user);
+          navigate("/browse");
+
+          // ...
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          setErrorMessage(errorCode + "-" + errorMessage);
+        });
+    }
   };
 
   return (
@@ -80,6 +129,7 @@ const Login = () => {
             >
               {isSignInFrom === true ? "Sign In" : "Sign Up"}
             </button>
+
             {isSignInFrom === true && (
               <div className="text-center mt-3 text-sm underline">
                 <Link className="text-white">Forget password?</Link>
