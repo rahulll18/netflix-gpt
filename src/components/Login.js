@@ -1,17 +1,17 @@
 import React, { useState, useRef } from "react";
 import Header from "./Header";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { validateData } from "../utils/Validate.js";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import { auth } from "../utils/Firebase.js";
+import { BG_IMG } from "../utils/Constant.js";
 
 const Login = () => {
   const [isSignInFrom, setIsSignInFrom] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
-  const navigate = useNavigate();
 
   const handleToggle = () => {
     setIsSignInFrom(!isSignInFrom);
@@ -42,15 +42,11 @@ const Login = () => {
         .then((userCredential) => {
           // Signed up
           const user = userCredential.user;
-          console.log(user);
-          navigate("/browse");
-          // ...
         })
         .catch((error) => {
           const errorCode = error.code;
           const errorMessage = error.message;
           setErrorMessage(errorCode + "-" + errorMessage);
-          navigate("/");
         });
     } else {
       //sign in logic
@@ -62,10 +58,6 @@ const Login = () => {
         .then((userCredential) => {
           // Signed in
           const user = userCredential.user;
-          console.log(user);
-          navigate("/browse");
-
-          // ...
         })
         .catch((error) => {
           const errorCode = error.code;
@@ -79,11 +71,7 @@ const Login = () => {
     <div>
       <Header />
       <div>
-        <img
-          src="https://assets.nflxext.com/ffe/siteui/vlv3/5e16108c-fd30-46de-9bb8-0b4e1bbbc509/29d8d7d7-83cc-4b5f-aa9b-6fd4f68bfaa6/IN-en-20240205-popsignuptwoweeks-perspective_alpha_website_large.jpg"
-          alt="logo"
-          className="absolute"
-        />
+        <img src={BG_IMG} alt="logo" className="absolute" />
       </div>
       <div className="h-screen relative flex justify-center items-center">
         <div className="login-container  bg-black bg-opacity-80  w-3/12 p-8  flex flex-col justify-center items-center">

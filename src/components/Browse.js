@@ -1,19 +1,16 @@
 import React from "react";
 import Header from "./Header";
-// import toast, { Toaster } from "react-hot-toast";
+import useNowPlayingMovies from "../hooks/useNowPlayingMovies";
+import MainContainer from "./MainContainer";
+import SecondoryContainer from "./SecondoryContainer";
 
 const Browse = () => {
-  // useEffect(() => {
-  //   // Display success toast only if it hasn't been displayed before
-
-  //   toast.success("Logged In Successfully !!!");
-  // }, []);
-
+  useNowPlayingMovies();
   return (
     <div>
-      {/* <Toaster position="top-center" reverseOrder={false} />{" "} */}
-      {/* Toaster component for displaying toasts */}
       <Header />
+      <MainContainer />
+      <SecondoryContainer />
     </div>
   );
 };

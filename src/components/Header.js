@@ -1,8 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { auth } from "../utils/Firebase.js";
-import { signOut } from "firebase/auth";
+import { signOut, onAuthStateChanged } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { addUser, removeUser } from "../utils/userSlice.js";
+import { useDispatch } from "react-redux";
+import { NETFLIX_LOGO, USER_LOGO } from "../utils/Constant.js";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -11,25 +14,37 @@ const Header = () => {
     signOut(auth)
       .then(() => {
         // Sign-out successful.
-        navigate("/");
       })
       .catch((error) => {
         // An error happened.
-        navigate("/error");
+        navigate("/error")
       });
   };
 
+  const dispatch = useDispatch();
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const { email, uid, displayName } = user;
+        dispatch(addUser({ email: email, uid: uid, displayName: displayName }));
+        navigate("/browse");
+      } else {
+        // User is signed out
+        dispatch(removeUser());
+        navigate("/");
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
   return (
-    <div className="absolute w-screen px-8 py-2 bg-gradient-to-b from-black z-10 flex justify-between items-center ">
-      <img
-        className="w-44"
-        src="https://imgs.search.brave.com/o_Qfx8kjPHmgW0HIEMncXFwKp9f3nxAjtmPl3sBE9lU/rs:fit:860:0:0/g:ce/aHR0cHM6Ly9hc3Nl/dHMubmZseGV4dC5j/b20vZmZlL3NpdGV1/aS9hY3F1aXNpdGlv/bi9ob21lL25mbHhs/b2dvLnBuZw"
-        alt="mainlogo"
-      />
+    <div className="absolute w-full px-8 py-2 bg-gradient-to-b from-black z-10 flex justify-between items-center  ">
+      <img className="w-44" src={NETFLIX_LOGO} alt="mainlogo" />
       {user && (
         <div className="flex justify-between items-center w-40">
           <img
-            src="https://wallpapers.com/images/hd/netflix-profile-pictures-1000-x-1000-qo9h82134t9nv0j0.jpg"
+            src={USER_LOGO}
             alt="userLogo"
             className="w-12 mx-4 rounded-md"
           />
