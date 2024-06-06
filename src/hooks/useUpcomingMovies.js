@@ -12,7 +12,7 @@ const useUpcomingMovies = () => {
       APT_OPTIONS
     );
     const jsonData = await data.json();
-    // console.log(jsonData);
+
     dispatch(addUpcomingMovies(jsonData.results));
   };
 

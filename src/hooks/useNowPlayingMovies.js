@@ -12,7 +12,7 @@ const useNowPlayingMovies = () => {
       APT_OPTIONS
     );
     const jsonData = await data.json();
-    // console.log(jsonData);
+   
     dispatch(addNowPlayingMovies(jsonData.results));
   };
 
